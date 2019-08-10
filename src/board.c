@@ -1,4 +1,6 @@
 #if INTERFACE
+#include "SDL2/SDL.h"
+#include "colors.h"
 typedef struct Board {
   unsigned char** data;
   unsigned char width;
@@ -8,7 +10,6 @@ typedef struct Board {
 
 #include <stdlib.h>
 #include "board.h"
-#include <time.h>
 #include <stdio.h>
 
 // Allocate memory for the game board.
@@ -74,4 +75,28 @@ void Board_Dispose (Board* target) {
     free((*target).data[column]);
   }
   free((*target).data);
+}
+
+
+#define CELL_PADDING 4
+#define CELL_SIDE 32
+
+// Board drawing
+void Board_Draw (SDL_Renderer* renderer, Board* target, Color unknown_tiles, Color mined_tiles) {
+  for (int x = 0; x < target->width; x++){
+    for (int y = 0; y < target->height; y++){
+      SDL_Rect r;
+      r.x = (x * CELL_SIDE) + (CELL_PADDING * 2);
+      r.y = (y * CELL_SIDE) + (CELL_PADDING * 2);
+      r.w = CELL_SIDE - (CELL_PADDING * 2);
+      r.h = CELL_SIDE - (CELL_PADDING * 2);
+      unsigned char value = Board_Get(target, x,y);
+      Color_Set(renderer, unknown_tiles);
+      if(value == 0xFF)
+      {
+        Color_Set(renderer, mined_tiles);
+      }
+      SDL_RenderFillRect(renderer, &r);
+    }
+  }
 }

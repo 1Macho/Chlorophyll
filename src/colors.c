@@ -1,13 +1,17 @@
-
 #if INTERFACE
 typedef struct Color {
   unsigned char r;
   unsigned char g;
   unsigned char b;
 } Color;
+#include "SDL2/SDL.h"
 #endif
 
 #include "colors.h"
+
+void Color_Set(SDL_Renderer* renderer, Color toset) {
+  SDL_SetRenderDrawColor(renderer, toset.r, toset.g, toset.b, 255);
+}
 
 Color ColorFromHSV (unsigned char h, unsigned char s, unsigned char v) {
     Color rgb;

@@ -15,6 +15,8 @@ int main(int argc, char* argv[]) {
     SDL_Renderer* renderer;
 
     Color background;
+    Color unknown_tiles;
+    Color mined_tiles;
     Board testBoard;
 
     int running;
@@ -24,8 +26,8 @@ int main(int argc, char* argv[]) {
         "Chlorophyll",                  // window title
         SDL_WINDOWPOS_UNDEFINED,           // initial x position
         SDL_WINDOWPOS_UNDEFINED,           // initial y position
-        640,                               // width, in pixels
-        640,                               // height, in pixels
+        520,                               // width, in pixels
+        520,                               // height, in pixels
         SDL_WINDOW_SHOWN                  // flags - see below
     );
 
@@ -40,8 +42,10 @@ int main(int argc, char* argv[]) {
 
     running = 1;
 
-    background = ColorFromHSV(0x00,0x00,0x21);
-    testBoard = Board_Create(10, 10, 0xFF/4);
+    background = ColorFromHSV(0x00,0x00,0x22);
+    unknown_tiles = ColorFromHSV(0x3F,0xA8,0xB0);
+    mined_tiles = ColorFromHSV(0x00,0xA8,0xB0);
+    testBoard = Board_Create(16, 16, 0xFF/4);
 
     while(running) {
       SDL_Event event;
@@ -53,6 +57,7 @@ int main(int argc, char* argv[]) {
       }
       SDL_SetRenderDrawColor(renderer, background.r, background.g, background.b, 255);
       SDL_RenderClear(renderer);
+      Board_Draw(renderer, &testBoard, unknown_tiles, mined_tiles);
       SDL_RenderPresent(renderer);
     }
 
