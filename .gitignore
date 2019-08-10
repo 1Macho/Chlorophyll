@@ -7,6 +7,9 @@
 *.obj
 *.elf
 
+# Header files
+*.h
+
 # Build folder
 bin/
 obj/
