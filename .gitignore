@@ -7,6 +7,14 @@
 *.obj
 *.elf
 
+# Build folder
+bin/
+obj/
+
+# Make files
+Makefile
+*.make
+
 # Linker output
 *.ilk
 *.map
