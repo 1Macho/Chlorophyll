@@ -15,7 +15,7 @@ unsigned char** Board_Allocate(unsigned char width, unsigned char height) {
   for (unsigned char column = 0; column < height; ++column) {
     data[column] = malloc(height * sizeof(unsigned char));
     for (unsigned char row = 0; row < height; ++row) {
-      (data[column]*)[row] = 0x00;
+      data[column][row] = 0x00;
     }
   }
   return data;
@@ -26,8 +26,8 @@ unsigned char Board_Get(Board* target, unsigned char x, unsigned char y) {
   if (x < 0 || x >= (*target).width || y < 0 || y >= (*target).height) {
     return 0x00;
   }
-  unsigned char* column = (*(*target).data)[x];
-  unsigned char result = (*column)[y];
+  unsigned char* column = (*target).data[x];
+  unsigned char result = column[y];
   return result;
 }
 
@@ -36,12 +36,12 @@ void Board_Set(Board* target, unsigned char x, unsigned char y, unsigned char va
   if (x < 0 || x >= (*target).width || y < 0 || y >= (*target).height) {
     return;
   }
-  unsigned char* column = (*(*target).data)[x];
-  (*column)[y] = value;
+  unsigned char* column = (*target).data[x];
+  column[y] = value;
 }
 
 // Create a board with the given size and density.
-Board* Board_Create (unsigned char width, unsigned char height, unsigned char density) {
+Board Board_Create (unsigned char width, unsigned char height, unsigned char density) {
   Board result;
   result.width = width;
   result.height = height;
@@ -51,8 +51,8 @@ Board* Board_Create (unsigned char width, unsigned char height, unsigned char de
 
 // Free the memory used by the board.
 void Board_Dispose (Board* target) {
-  for (unsigned char column = 0; column < (target*).height; ++column) {
-    free((target*).data[column]);
+  for (unsigned char column = 0; column < (*target).height; ++column) {
+    free((*target).data[column]);
   }
-  free((target*).data);
+  free((*target).data);
 }
