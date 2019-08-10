@@ -41,9 +41,7 @@ int main(int argc, char* argv[]) {
     running = 1;
 
     background = ColorFromHSV(0x00,0x00,0x21);
-    testBoard = Board_Create(10, 10, 25);
-    Board_Set(&testBoard, 2, 2, 0xF);
-    printf("Test: %d", Board_Get(&testBoard, 2, 2));
+    testBoard = Board_Create(10, 10, 0xFF/4);
 
     while(running) {
       SDL_Event event;

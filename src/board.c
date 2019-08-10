@@ -8,6 +8,8 @@ typedef struct Board {
 
 #include <stdlib.h>
 #include "board.h"
+#include <time.h>
+#include <stdio.h>
 
 // Allocate memory for the game board.
 unsigned char** Board_Allocate(unsigned char width, unsigned char height) {
@@ -40,12 +42,29 @@ void Board_Set(Board* target, unsigned char x, unsigned char y, unsigned char va
   column[y] = value;
 }
 
+void Board_Debug(Board* target) {
+  for (int x = 0; x < target->width; ++x){
+    for (int y = 0; y < target->height; ++y) {
+      printf("%02X", Board_Get(target, x, y));
+    }
+    printf("\n");
+  }
+}
+
 // Create a board with the given size and density.
 Board Board_Create (unsigned char width, unsigned char height, unsigned char density) {
   Board result;
   result.width = width;
   result.height = height;
   result.data = Board_Allocate(width, height);
+  for (int x = 0; x < width; ++x){
+    for (int y = 0; y < height; ++y) {
+      unsigned char random = rand() % 0xFF;
+      if (random <= density) {
+        Board_Set(&result, x, y, 0xFF);
+      }
+    }
+  }
   return result;
 }
 
