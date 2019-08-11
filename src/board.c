@@ -13,6 +13,7 @@ typedef struct Board {
 #include <stdlib.h>
 #include "board.h"
 #include <stdio.h>
+#include <time.h>
 
 // Allocate memory for the game board.
 unsigned char** Board_Allocate(unsigned char width, unsigned char height) {
