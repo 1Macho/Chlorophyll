@@ -56,6 +56,7 @@ void Board_Debug(Board* target) {
 
 // Create a board with the given size and density.
 Board Board_Create (unsigned char width, unsigned char height, unsigned char density) {
+  srand(time(0));
   Board result;
   result.width = width;
   result.height = height;
@@ -134,9 +135,12 @@ void Board_FlagCell (Board* target, unsigned char x, unsigned char y) {
 }
 
 // Tick the board on a specific cell
-void Board_TickCell (Board* target, unsigned char x, unsigned char y) {
+unsigned char Board_TickCell (Board* target, unsigned char x, unsigned char y) {
   if (x < 0 || x >= target->width || y < 0 || y >= target->height) {
-    return;
+    return 0;
+  }
+  if (Board_Get(target,x,y) == 0x0F) {
+    return 1;
   }
   if (Board_Get(target,x,y)==0x00) {
     unsigned char value = Board_Risk(target,x,y);
@@ -152,10 +156,11 @@ void Board_TickCell (Board* target, unsigned char x, unsigned char y) {
       Board_TickCell(target, x+1, y+1);
     }
   }
+  return 0;
 }
 
 // Board drawing
-void Board_Draw (SDL_Renderer* renderer, Board* target, Color unknown_tiles, Color mined_tiles, Color selected_tile, Color known_tiles, Color flagged_tiles, Color selected_flagged_tile, unsigned char selected_x, unsigned char selected_y) {
+void Board_Draw (SDL_Renderer* renderer, Board* target, Color unknown_tiles, Color mined_tiles, Color selected_tile, Color known_tiles, Color flagged_tiles, Color selected_flagged_tile, unsigned char selected_x, unsigned char selected_y, unsigned char dead) {
   for (int x = 0; x < target->width; x++){
     for (int y = 0; y < target->height; y++){
       SDL_Rect r;
@@ -203,6 +208,11 @@ void Board_Draw (SDL_Renderer* renderer, Board* target, Color unknown_tiles, Col
         if (x == selected_x & y == selected_y) {
           Color_Set(renderer, selected_flagged_tile);
         }
+      }
+      if (dead) {
+          if (value == 0x0F) {
+            Color_Set(renderer, mined_tiles);
+          }
       }
       if (value == 0x00 | value == 0x0F | value == 0xFF | value == 0xF0) {
         SDL_RenderFillRect(renderer, &r);

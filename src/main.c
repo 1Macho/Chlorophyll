@@ -33,7 +33,7 @@ int main(int argc, char* argv[]) {
     unsigned char tick_cell;
     unsigned char flag_cell;
     unsigned long mouse_state;
-
+    unsigned char dead;
 
     int running;
 
@@ -65,7 +65,7 @@ int main(int argc, char* argv[]) {
     known_tiles = ColorFromHSV(0x1D,0xA8,0xB0);
     flagged_tiles = ColorFromHSV(0x76,0xA8,0xB0);
     selected_flagged_tile = ColorFromHSV(0x76,0xA8,0x80);
-    testBoard = Board_Create(16, 16, 0xFF/4);
+    testBoard = Board_Create(16, 16, 0xFF/10);
     selected_x = -1;
     selected_y = -1;
     mouse_x = -1;
@@ -73,6 +73,7 @@ int main(int argc, char* argv[]) {
     tick_cell = 0;
     last_click = 0;
     last_rclick = 0;
+    dead = 0;
 
     while(running) {
       SDL_Event event;
@@ -116,7 +117,7 @@ int main(int argc, char* argv[]) {
       selected_x = (mouse_x-CELL_PADDING) / CELL_SIDE;
       selected_y = (mouse_y-CELL_PADDING) / CELL_SIDE;
       if (tick_cell) {
-        Board_TickCell(&testBoard,selected_x,selected_y);
+        dead = Board_TickCell(&testBoard,selected_x,selected_y);
       }
 
       if (flag_cell) {
@@ -125,8 +126,12 @@ int main(int argc, char* argv[]) {
 
       SDL_SetRenderDrawColor(renderer, background.r, background.g, background.b, 255);
       SDL_RenderClear(renderer);
-      Board_Draw(renderer, &testBoard, unknown_tiles, mined_tiles, selected_tile, known_tiles, flagged_tiles, selected_flagged_tile, selected_x, selected_y);
+      Board_Draw(renderer, &testBoard, unknown_tiles, mined_tiles, selected_tile, known_tiles, flagged_tiles, selected_flagged_tile, selected_x, selected_y,dead);
       SDL_RenderPresent(renderer);
+      if(dead) {
+        SDL_Delay(3000);
+        running = 0;
+      }
     }
 
     // The window is open: could enter program loop here (see SDL_PollEvent())
