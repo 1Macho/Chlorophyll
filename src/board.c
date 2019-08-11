@@ -85,32 +85,52 @@ unsigned char Board_Risk (Board* target, unsigned char x, unsigned char y) {
   if (x < 0 || x >= target->width || y < 0 || y >= target->height) {
     return result;
   }
-  if (Board_Get(target, x-1, y-1) == 0x0F) {
+  if (Board_Get(target, x-1, y-1) == 0x0F | Board_Get(target, x-1, y-1) == 0xFF) {
     result++;
   }
-  if (Board_Get(target, x, y-1) == 0x0F) {
+  if (Board_Get(target, x, y-1) == 0x0F | Board_Get(target, x, y-1) == 0xFF) {
     result++;
   }
-  if (Board_Get(target, x+1, y-1) == 0x0F) {
+  if (Board_Get(target, x+1, y-1) == 0x0F | Board_Get(target, x+1, y-1) == 0xFF) {
     result++;
   }
-  if (Board_Get(target, x-1, y) == 0x0F) {
+  if (Board_Get(target, x-1, y) == 0x0F | Board_Get(target, x-1, y) == 0xFF) {
     result++;
   }
-  if (Board_Get(target, x+1, y) == 0x0F) {
+  if (Board_Get(target, x+1, y) == 0x0F | Board_Get(target, x+1, y) == 0xFF) {
     result++;
   }
-  if (Board_Get(target, x-1, y+1) == 0x0F) {
+  if (Board_Get(target, x-1, y+1) == 0x0F | Board_Get(target, x-1, y+1) == 0xFF) {
     result++;
   }
-  if (Board_Get(target, x, y+1) == 0x0F) {
+  if (Board_Get(target, x, y+1) == 0x0F | Board_Get(target, x, y+1) == 0xFF) {
     result++;
   }
-  if (Board_Get(target, x+1, y+1) == 0x0F) {
+  if (Board_Get(target, x+1, y+1) == 0x0F | Board_Get(target, x+1, y+1) == 0xFF ) {
     result++;
   }
   if (result == 0x00) { result = 0x09; }
   return result;
+}
+
+// Flag a cell on the board
+void Board_FlagCell (Board* target, unsigned char x, unsigned char y) {
+  if (Board_Get(target,x,y) == 0x0F) {
+    Board_Set(target,x,y,0xFF);
+    return;
+  }
+  if (Board_Get(target,x,y) == 0x00) {
+    Board_Set(target,x,y,0xF0);
+    return;
+  }
+  if (Board_Get(target,x,y) == 0xFF) {
+    Board_Set(target,x,y,0x0F);
+    return;
+  }
+  if (Board_Get(target,x,y) == 0xF0) {
+    Board_Set(target,x,y,0x00);
+    return;
+  }
 }
 
 // Tick the board on a specific cell
@@ -135,7 +155,7 @@ void Board_TickCell (Board* target, unsigned char x, unsigned char y) {
 }
 
 // Board drawing
-void Board_Draw (SDL_Renderer* renderer, Board* target, Color unknown_tiles, Color mined_tiles, Color selected_tile, Color known_tiles, unsigned char selected_x, unsigned char selected_y) {
+void Board_Draw (SDL_Renderer* renderer, Board* target, Color unknown_tiles, Color mined_tiles, Color selected_tile, Color known_tiles, Color flagged_tiles, Color selected_flagged_tile, unsigned char selected_x, unsigned char selected_y) {
   for (int x = 0; x < target->width; x++){
     for (int y = 0; y < target->height; y++){
       SDL_Rect r;
@@ -178,7 +198,13 @@ void Board_Draw (SDL_Renderer* renderer, Board* target, Color unknown_tiles, Col
           SDL_RenderFillRect(renderer, &rbthree);
         }
       }
-      if (value == 0x00 | value == 0x0F | value == 0x1F) {
+      if (value == 0xFF | value == 0xF0) {
+        Color_Set(renderer, flagged_tiles);
+        if (x == selected_x & y == selected_y) {
+          Color_Set(renderer, selected_flagged_tile);
+        }
+      }
+      if (value == 0x00 | value == 0x0F | value == 0xFF | value == 0xF0) {
         SDL_RenderFillRect(renderer, &r);
       }
     }
